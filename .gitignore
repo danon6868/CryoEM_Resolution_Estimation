@@ -1,0 +1,5 @@
+*.ipynb
+*.ipynb_checkpoints
+*.mrc
+*.eman2*
+__pycache__
