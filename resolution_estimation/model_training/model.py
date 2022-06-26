@@ -1,3 +1,9 @@
+import torch
+from torch import nn
+
+from training_config import DROPOUT_RATES, LAYER_FILTERS
+
+
 class UNet3D(nn.Module):
     def __init__(
         self,
