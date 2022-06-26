@@ -1,7 +1,10 @@
 import torch
 from torch import nn
+from training_config import TrainParameters
 
-from training_config import DROPOUT_RATES, LAYER_FILTERS
+
+DROPOUT_RATES = TrainParameters.dropout_rates
+LAYER_FILTERS = TrainParameters.layer_filters
 
 
 class UNet3D(nn.Module):

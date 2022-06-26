@@ -3,8 +3,7 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset
 from torchvision.transforms import Compose
-
-from training_config import DEVICE
+from loguru import logger
 
 
 class ResValDataset(Dataset):
@@ -45,7 +44,7 @@ class WeightedMSELoss(nn.Module):
         self.device = device
 
     def forward(self, input, target):
-        weights = torch.ones(input.shape).to(DEVICE)
+        weights = torch.ones(input.shape).to(self.device)
         weights[target == 100.0] = self.outer_weights
         loss = weights * ((input - target) ** 2)
 
@@ -67,7 +66,7 @@ class WeightedMAE(nn.Module):
         self.device = device
 
     def forward(self, input, target):
-        weights = torch.ones(input.shape).to(DEVICE)
+        weights = torch.ones(input.shape).to(self.device)
         weights[target == 100.0] = self.outer_weights
         loss = weights * (input - target).abs()
 
@@ -127,8 +126,6 @@ class Trainer:
     def fit(self, epochs=None):
         if epochs is None:
             epochs = self.epochs
-        if self.find_lr:
-            self._find_lr()
 
         for epoch in range(epochs):
 
@@ -141,12 +138,23 @@ class Trainer:
                 val_loss = "NO"
 
             if self.verbose > 0:
-                print()
-                print(
-                    f"Epoch {epoch+1} out of {epochs}: Train loss = {train_loss}, validation loss = {val_loss} \n\
-                                         Train metric = {train_metric}, validation metric = {val_metric}"
+                logger_base_string = f"Epoch: {epoch+1}\tTrain loss: {train_loss:.6f}"
+                logger_val_string = (
+                    f"Validation loss: {val_loss:.6f}" if self.validate else ""
                 )
-                print()
+                logger_train_metric = f"Train metric: {train_metric:.6f}"
+                logger_val_metric = (
+                    f"Validation metric: {val_metric:.6f}" if self.validate else ""
+                )
+                logger_complete_string = "\t".join(
+                    [
+                        logger_base_string,
+                        logger_val_string,
+                        logger_train_metric,
+                        logger_val_metric,
+                    ]
+                )
+                logger.info(logger_complete_string)
 
     def _train(self, loader):
         ## TODO define the way to use scheduler in init and do not hardcode it)

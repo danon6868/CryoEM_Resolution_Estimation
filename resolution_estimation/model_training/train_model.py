@@ -10,7 +10,7 @@ from training_config import TrainParameters
 
 def set_up(output_dir):
     """Creates output directory for trained model weights if not exists"""
-    if output_dir not in os.listdir():
+    if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
 
@@ -20,10 +20,10 @@ def train_model(
     trainset = ResValDataset(train_data)
     validset = ResValDataset(valid_data)
     trainloader = DataLoader(
-        trainset, batch_size=TrainParameters.batch_size, shuffle=True, num_workers=-1
+        trainset, batch_size=TrainParameters.batch_size, shuffle=True, num_workers=2
     )
     validloader = DataLoader(
-        validset, batch_size=TrainParameters.batch_size, shuffle=False, num_workers=-1
+        validset, batch_size=TrainParameters.batch_size, shuffle=False, num_workers=2
     )
     DEVICE = TrainParameters.device
     model = UNet3D(
@@ -52,8 +52,10 @@ def train_model(
         validate=TrainParameters.validate,
         verbose=verbose,
     )
-
-    trainer.fit()
+    try:
+        trainer.fit()
+    except KeyboardInterrupt:
+        return model
 
     return model
 
@@ -62,34 +64,37 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--train_data",
-        default="../example_data/example_train_data.hdf5",
+        default="resolution_estimation/example_data/example_train_data.hdf5",
         help="Path to file with train samples.",
     )
     parser.add_argument(
         "--valid_data",
-        default="../example_data/example_train_data.hdf5",
-        help="Path to file with validation samples.",
+        default="resolution_estimation/example_data/example_train_data.hdf5",
+        help="Path to file with validation samples",
     )
     parser.add_argument(
         "--n_epoches",
         default=30,
-        help="The number of epoches to train the model.",
+        help="The number of epoches to train the model",
+        type=int,
     )
     parser.add_argument(
-        "-v" "--verbose",
+        "-v",
+        "--verbose",
         default=2,
         choices=[0, 1, 2],
-        help="The higher the value, the more information about training will be displayed to the user.",
+        help="The higher the value, the more information about training will be displayed to the user",
+        type=int,
     )
     parser.add_argument(
         "--out_weights_dir",
-        default="../model_weights",
-        help="The directory where model weights will be saved.",
+        default="resolution_estimation/model_weights",
+        help="The directory where model weights will be saved",
     )
     parser.add_argument(
         "--out_weights_filename",
         default="unet_3d_trained_weights.pth",
-        help="The filename with trained model weights.",
+        help="The filename with trained model weights",
     )
 
     args = parser.parse_args()
@@ -102,12 +107,12 @@ def main():
         train_data=args.train_data,
         valid_data=args.valid_data,
         n_epoches=args.n_epoches,
-        verbose=args.verboses,
+        verbose=args.verbose,
     )
 
     # Saving model weights
     torch.save(
-        model.state_dict(), os.path.join(out_weights_dir, parser.out_weights_filename)
+        model.state_dict(), os.path.join(out_weights_dir, args.out_weights_filename)
     )
 
 
