@@ -3,3 +3,4 @@
 *.mrc
 *.eman2*
 __pycache__
+venv/

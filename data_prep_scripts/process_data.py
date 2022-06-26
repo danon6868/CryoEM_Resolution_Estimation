@@ -17,7 +17,7 @@ PROCESSED_FILES_PATH = "../data/resmap_processed_dataset"
 
 
 def process_files_resmap(density_map_files, target_files):
-    # TODO: create the similar thing for monores if it will be repaired.
+    # TODO: create the similar thing for monores when it will be repaired.
     non_zero_cube_count = 0
     cube_count = 0
     all_target_cubes = []
@@ -35,12 +35,10 @@ def process_files_resmap(density_map_files, target_files):
         if target_cubes.shape != density_map_cubes.shape:
             raise ValueError("Unequal target and density map shapes")
 
-        # TODO: removal of cubes prevents protein reconstruction. Determine a 
-        # methodology for storing cube location information in the repository
-        # for later reconstruction (mb do not delete cubes during preprocessing)
-        # of test data or smth like this...
         cube_count += target_cubes.shape[0]
-        target_cubes, density_map_cubes = remove_empty_cubes(target_cubes, density_map_cubes)
+        target_cubes, density_map_cubes = remove_empty_cubes(
+            target_cubes, density_map_cubes
+        )
         all_target_cubes.append(target_cubes)
         all_density_map_cubes.append(density_map_cubes)
 
@@ -65,7 +63,12 @@ def process_data(density_map_path, target_path):
     target_files = sorted(os.listdir(target_path))
 
     logger.info("Split files on train, valid and test sets...")
-    density_map_train, density_map_valid, targets_train, targets_valid = train_test_split(
+    (
+        density_map_train,
+        density_map_valid,
+        targets_train,
+        targets_valid,
+    ) = train_test_split(
         density_map_files, target_files, train_size=TRAIN_SIZE, random_state=SEED
     )
     density_map_valid, density_map_test, targets_valid, targets_test = train_test_split(
@@ -73,37 +76,34 @@ def process_data(density_map_path, target_path):
     )
 
     logger.info("Processing train data...")
-    train_target_cubes, train_density_map_cubes = process_files_resmap(density_map_train, targets_train)
+    train_target_cubes, train_density_map_cubes = process_files_resmap(
+        density_map_train, targets_train
+    )
     logger.info("Processing valid data...")
-    valid_target_cubes, valid_density_map_cubes = process_files_resmap(density_map_valid, targets_valid)
+    valid_target_cubes, valid_density_map_cubes = process_files_resmap(
+        density_map_valid, targets_valid
+    )
     logger.info("Processing test data...")
-    test_target_cubes, test_density_map_cubes = process_files_resmap(density_map_test, targets_test)
+    test_target_cubes, test_density_map_cubes = process_files_resmap(
+        density_map_test, targets_test
+    )
 
     # Create hdf5 files for storing maps and targets
-    train_dataset = {
-        "map": train_density_map_cubes,
-        "target": train_target_cubes
-    }
+    train_dataset = {"map": train_density_map_cubes, "target": train_target_cubes}
     if train_density_map_cubes.shape[0] != train_target_cubes.shape[0]:
         raise ValueError("Unequal train label and map counts")
 
     logger.info(f"Saving {train_target_cubes.shape[0]} train samples")
     save_dataset(join(PROCESSED_FILES_PATH, "train_repository.hdf5"), train_dataset)
 
-    valid_dataset = {
-        "map": valid_density_map_cubes,
-        "target": valid_target_cubes
-    }
+    valid_dataset = {"map": valid_density_map_cubes, "target": valid_target_cubes}
     if valid_density_map_cubes.shape[0] != valid_target_cubes.shape[0]:
         raise ValueError("Unequal validation label and map counts")
 
     logger.info(f"Saving {valid_target_cubes.shape[0]} valid samples")
     save_dataset(join(PROCESSED_FILES_PATH, "valid_repository.hdf5"), valid_dataset)
 
-    test_dataset = {
-        "map": test_density_map_cubes,
-        "target": test_target_cubes
-    }
+    test_dataset = {"map": test_density_map_cubes, "target": test_target_cubes}
     if test_density_map_cubes.shape[0] != test_target_cubes.shape[0]:
         raise ValueError("Unequal test label and map counts")
 
