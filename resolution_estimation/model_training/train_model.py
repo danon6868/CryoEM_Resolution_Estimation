@@ -1,6 +1,7 @@
 import argparse
 import os
 from torch import device
+import torch
 from torch.utils.data import DataLoader
 from model import UNet3D
 from training_utils import initialize_weights, ResValDataset, Trainer
@@ -103,3 +104,12 @@ def main():
         n_epoches=args.n_epoches,
         verbose=args.verboses,
     )
+
+    # Saving model weights
+    torch.save(
+        model.state_dict(), os.path.join(out_weights_dir, parser.out_weights_filename)
+    )
+
+
+if __name__ == "__main__":
+    main()
