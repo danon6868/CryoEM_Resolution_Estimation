@@ -1,6 +1,5 @@
 import argparse
 import os
-from torch import device
 import torch
 from torch.utils.data import DataLoader
 from model import UNet3D
