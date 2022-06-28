@@ -2,8 +2,8 @@ import mrcfile as mrc
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
-from data_preparation.data_prep_utils import normalize_map, pad
-from model_training.training_config import TrainParameters
+from ..data_preparation.data_prep_utils import normalize_map, pad
+from ..model_training.training_config import TrainParameters
 
 
 def read_mrc(mrc_file_path):

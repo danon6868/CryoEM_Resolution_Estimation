@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import torch
 from torch.cuda import is_available
 from torch.optim import AdamW, Optimizer
-from training_utils import WeightedMSELoss, WeightedMAE
+from ..model_training.training_utils import WeightedMSELoss, WeightedMAE
 
 
 @dataclass

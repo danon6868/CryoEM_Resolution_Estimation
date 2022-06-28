@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from training_config import TrainParameters
+from ..model_training.training_config import TrainParameters
 
 
 DROPOUT_RATES = TrainParameters.dropout_rates
