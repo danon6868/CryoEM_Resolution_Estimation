@@ -28,18 +28,54 @@ In the course of this work, some models were trained on simulated data, but thes
 
 ![img](/images/experimental_data_metric.png)
 
+The image below shows a comparison of the work of the trained model and similar tools. It can be seen that the neural network produces predictions that generally agree with the results of existing analogues, and often the results of the work are intermediate between the results of Resmap and Monores, although training took place only on data obtained using Resmap. 
+
+![img](/images/compare_with_other_tools.png)
 
 ## Data description
 
-## Data collection and processing
+To train the model on experimental data, 180 protein stuctures with different resolution and molecular weight were selected. This structures were obtained using cryoelectron microscopy. Next, for each electron density map (simulated or experimental), a local resolution map was obtained using the Resmap program (Kucukelbir, Sigworth, Tagare, 2014) with default parameters. After that, the simulated and experimental data were independently divided into three parts: training, validation and test in the ratio 0.7:0.15:0.15.
+Further data processing was as follows: all electron density maps and their corresponding local resolution maps were divided into small fragments of 16x16x16 voxels (it was a hyperparameter and was tuned using train/test split). This was done, on the one hand, so that the model had the opportunity to look at some area of each element of the volume to assess the resolution in it, but on the other hand, so that these fragments were small enough. The values ​​of the electron density maps were converted to the range from 0 to 1 using min-max normalization.
 
-### Simulated data
+In `resolution_estimation_with_dl/example_data` directory you can find several files, which will help you to get acquainted with this work:
 
-### Experimental data
++ `3l08.pdb` &mdash; [protein structure](https://www.rcsb.org/structure/3L08) for electron density map simulation
++ `13939_map.mrc` &mdash; [electron density map](https://www.ebi.ac.uk/emdb/EMD-13939) for running Resmap and obtaining local resolution map
++ `example_train_data.hdf5` &mdash; small dataset which can be used to run model training
 
-## Model building and training
+## Workflow overview
 
-## Test model
+All code is stored in `resolution_estimation_with_dl` package.
+
+### Data preparation
+
+Code for data processing is stored in `resolution_estimation_with_dl/data_preparation`:
+
++ `generate_maps.py` &mdash; this code was used to generate electron density maps from raw **.pdb** files using `pdb2mrc` function from **EMAN2** package
++ `run_resmap.py` &mdash; this code was used to estimate local resolution map for all **.mrc** files
++ `data_prep_utils.py` &mdash; functions for processing pairs: electron density and local resolution maps
++ `process_data.py` &mdash; script for data processing
+
+### Model training
+
+Code for model training is stored in `resolution_estimation_with_dl/model_training`:
+
++ `training_config.py` &mdash; this file contains different hyperparameters for model training, e.g. *learning rate*
++ `model.py` &mdash; class of 3D-UNet model
++ `training_utils.py` &mdash; classes and functions for model training
++ `train_model.py` &mdash; script that runs model training
+
+### Resolution estimation
+
+Code for resolution estimation for a given electron density map is stored in `resolution_estimation_with_dl/resolution_estimation`:
+
++ `utils.py` &mdash; functions for model inference (local resolution estimation)
++ `run_model.py` &mdash; script that runs model inference
+
+
+
+
+![img](/images/model_example_13939.png)
 
 
 
