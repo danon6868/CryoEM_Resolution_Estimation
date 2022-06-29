@@ -2,9 +2,13 @@ import argparse
 import os
 import torch
 from torch.utils.data import DataLoader
-from model import UNet3D
-from training_utils import initialize_weights, ResValDataset, Trainer
-from training_config import TrainParameters
+from resolution_estimation_with_dl.model_training.model import UNet3D
+from resolution_estimation_with_dl.model_training.training_utils import (
+    initialize_weights,
+    ResValDataset,
+    Trainer,
+)
+from resolution_estimation_with_dl.model_training.training_config import TrainParameters
 
 
 def set_up(output_dir):
@@ -16,6 +20,17 @@ def set_up(output_dir):
 def train_model(
     train_data: str, valid_data: str, n_epoches: int, verbose: int
 ) -> UNet3D:
+    """Train and (if necessary) validate model.
+
+    Args:
+        train_data (str): Path to the train data.
+        valid_data (str): Path to the validation data.
+        n_epoches (int): Number of iterations for model training.
+        verbose (int): The detailing of the train process.
+
+    Returns:
+        UNet3D: Trained model.
+    """
     trainset = ResValDataset(train_data)
     validset = ResValDataset(valid_data)
     trainloader = DataLoader(
@@ -63,12 +78,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--train_data",
-        default="resolution_estimation/example_data/example_train_data.hdf5",
+        default="resolution_estimation_with_dl/example_data/example_train_data.hdf5",
         help="Path to file with train samples.",
     )
     parser.add_argument(
         "--valid_data",
-        default="resolution_estimation/example_data/example_train_data.hdf5",
+        default="resolution_estimation_with_dl/example_data/example_train_data.hdf5",
         help="Path to file with validation samples",
     )
     parser.add_argument(
@@ -87,7 +102,7 @@ def main():
     )
     parser.add_argument(
         "--out_weights_dir",
-        default="resolution_estimation/model_weights",
+        default="resolution_estimation_with_dl/model_weights",
         help="The directory where model weights will be saved",
     )
     parser.add_argument(

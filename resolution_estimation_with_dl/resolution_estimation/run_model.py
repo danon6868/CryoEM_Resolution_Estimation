@@ -3,21 +3,30 @@ import os
 import gdown
 from pathlib import Path
 from loguru import logger
-from ..model_training.model import UNet3D
-from ..model_training.training_config import TrainParameters
-from ..resolution_estimation.utils import run_model, save_mrc
+from resolution_estimation_with_dl.model_training.model import UNet3D
+from resolution_estimation_with_dl.model_training.training_config import TrainParameters
+from resolution_estimation_with_dl.resolution_estimation.utils import (
+    run_model,
+    save_mrc,
+)
 
 
 OUTPUT_DIR = "results/"
 
 
-def set_up():
-    """Creates output directory for local resolution map if not exists"""
+def set_up() -> None:
+    """Creates output directory for local resolution map if not exists."""
     if not os.path.isdir(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
 
 
-def download_weights(model_name):
+def download_weights(model_name: str) -> None:
+    """Downloads pretrained weights.
+
+    Args:
+        model_name (str): Model name to download. It can be `unet_3d_trained_dropout.pth` or `unet_3d_trained_batchnorm.pth`.
+    """
+
     if model_name == "unet_3d_trained_dropout.pth":
         url = "https://drive.google.com/u/0/uc?id=1-Imt4lolu-dMMsNItYgLV8GFDKDGUCr0&export=download"
         out_file_name = os.path.join(
@@ -67,7 +76,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--electron_density_map",
-        default="resolution_estimation_with_dl/example_data/14526_map.mrc",
+        default="resolution_estimation_with_dl/example_data/13939_map.mrc",
         help="Electron density map for which you want to estimate local resolution map. By default it will be example map",
     )
     parser.add_argument(

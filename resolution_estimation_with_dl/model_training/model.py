@@ -1,6 +1,7 @@
+from typing import Tuple
 import torch
 from torch import nn
-from ..model_training.training_config import TrainParameters
+from resolution_estimation_with_dl.model_training.training_config import TrainParameters
 
 
 DROPOUT_RATES = TrainParameters.dropout_rates
@@ -10,11 +11,19 @@ LAYER_FILTERS = TrainParameters.layer_filters
 class UNet3D(nn.Module):
     def __init__(
         self,
-        dropout_rates=DROPOUT_RATES,
-        upsample_mode="nearest",
-        regularization="dropout",
-        align_corners=False,
+        dropout_rates: Tuple[float] = DROPOUT_RATES,
+        upsample_mode: str = "nearest",
+        regularization: str = "dropout",
+        align_corners: bool = False,
     ) -> None:
+        """Structure of the UNet3D model.
+
+        Args:
+            dropout_rates (Tuple[float], optional): Parameter `p` for dropout layers. Defaults to DROPOUT_RATES in `training_config.py`.
+            upsample_mode (str, optional): `https://pytorch.org/docs/stable/generated/torch.nn.Upsample.html`. Defaults to "nearest".
+            regularization (str, optional):Which type of regularization to use: `dropout` or `batchnorm`. Defaults to "dropout".
+            align_corners (bool, optional): `https://pytorch.org/docs/stable/generated/torch.nn.Upsample.html`. Defaults to False.
+        """
         super().__init__()
 
         self.reg = regularization
@@ -261,7 +270,15 @@ class UNet3D(nn.Module):
             ),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Implement a forward pass throught the model.
+
+        Args:
+            x (torch.Tensor): torch.Tensor with shape (BATCH_SIZE, 1, *MODEL_INPUT_SHAPE) with electron density values.
+
+        Returns:
+            torch.Tensor: torch.Tensor with shape (BATCH_SIZE, 1, *MODEL_INPUT_SHAPE) with local resolution values.
+        """
         first_enc_res = self.conv1_2(self.conv1_1(x))
         second_enc_res = self.conv2_2(self.conv2_1(self.max_pool1(first_enc_res)))
         third_enc_res = self.conv3_2(self.conv3_1(self.max_pool2(second_enc_res)))
