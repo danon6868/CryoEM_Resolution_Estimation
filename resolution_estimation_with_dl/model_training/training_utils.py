@@ -1,9 +1,13 @@
+from typing import Tuple
 import h5py
 import torch
 from torch import nn
-from torch.utils.data import Dataset
+from torch.optim import Optimizer
+from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import Compose
 from loguru import logger
+
+from resolution_estimation_with_dl.model_training.model import UNet3D
 
 
 class ResValDataset(Dataset):
@@ -81,14 +85,14 @@ class Trainer:
 
     def __init__(
         self,
-        model,
+        model: UNet3D,
         epochs: int,
-        criterion,
-        optimizer,
-        trainloader,
-        validloader,
+        criterion: nn.Module,
+        optimizer: Optimizer,
+        trainloader: DataLoader,
+        validloader: DataLoader,
         device: str,
-        metric,
+        metric: nn.Module,
         validate: bool = True,
         verbose: int = 2,
     ) -> None:
@@ -96,16 +100,16 @@ class Trainer:
         and validation and train model during defined number of epoches.
 
         Args:
-            model (_type_): _description_
-            epochs (_type_): _description_
-            criterion (_type_): _description_
-            optimizer (_type_): _description_
-            trainloader (_type_): _description_
-            validloader (_type_): _description_
-            device (_type_): _description_
-            metric (_type_): _description_
-            validate (bool, optional): _description_. Defaults to True.
-            verbose (int, optional): _description_. Defaults to 2.
+            model (UNet3D): The instance of the chosen model.
+            epochs (int): Number of iterations for model training.
+            criterion (nn.Module): Loss function.
+            optimizer (Optimizer): Which optimizer to use.
+            trainloader (DataLoader): Train `Dataloader`.
+            validloader (DataLoader): Validation `Dataloader`.
+            device (str): Which device to use: can be `cpu` or `cuda`.
+            metric (nn.Module): Metric.
+            validate (bool, optional): Whether to validate model after each epoch. Defaults to True.
+            verbose (int, optional): The detailing of the train process. Defaults to 2.
         """
 
         self.model = model.to(device)
@@ -123,7 +127,7 @@ class Trainer:
             optimizer, patience=3
         )
 
-    def fit(self, epochs=None):
+    def fit(self, epochs: int = None):
         if epochs is None:
             epochs = self.epochs
 
@@ -156,8 +160,10 @@ class Trainer:
                 )
                 logger.info(logger_complete_string)
 
-    def _train(self, loader):
+    def _train(self, loader: DataLoader) -> Tuple[float, float]:
         ## TODO define the way to use scheduler in init and do not hardcode it)
+        """Performs one training epoch."""
+
         self.model.train()
         epoch_loss = 0
         epoch_metric = 0
@@ -184,7 +190,9 @@ class Trainer:
         print("\n", end="")
         return epoch_loss, epoch_metric
 
-    def _validate(self, loader):
+    def _validate(self, loader: DataLoader) -> Tuple[float, float]:
+        """Performs validation after each epoch."""
+
         self.model.eval()
         epoch_loss = 0
         epoch_metric = 0
@@ -206,7 +214,9 @@ class Trainer:
         print("\n", end="")
         return epoch_loss, epoch_metric
 
-    def _clear_vram(self, inputs, labels, outputs):
+    def _clear_vram(self, inputs, labels, outputs) -> None:
+        """Method for cleaning video memory."""
+
         inputs = inputs.to("cpu")
         labels = labels.to("cpu")
         outputs = outputs.to("cpu")
@@ -214,11 +224,11 @@ class Trainer:
         torch.cuda.empty_cache()
 
 
-def initialize_weights(model):
+def initialize_weights(model: UNet3D) -> None:
     """Initialize model weights using He initialization (Kaiming uniform).
 
     Args:
-        model (_type_): The instance of chosen model.
+        model (UNet3D): The instance of chosen model.
     """
     for part in model.children():
         try:

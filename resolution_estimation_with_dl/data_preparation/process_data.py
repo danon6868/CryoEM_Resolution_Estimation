@@ -2,21 +2,34 @@ import numpy as np
 import mrcfile as mrc
 import os
 import h5py
+from typing import List, Tuple, Dict
 from os.path import join
 from loguru import logger
 from sklearn.model_selection import train_test_split
-from data_prep_utils import *
+from resolution_estimation_with_dl.data_preparation.data_prep_utils import *
 
 
 SEED = 10101
 TRAIN_SIZE = 0.7
 MODEL_INPUT_SHAPE = (16, 16, 16)
-MAP_FILES_PATH = "../data/raw_inputs"
-RESMAP_TARGETS_PATH = "../data/resmap_targets"
-PROCESSED_FILES_PATH = "../data/resmap_processed_dataset"
+MAP_FILES_PATH = "data/raw_inputs"
+RESMAP_TARGETS_PATH = "data/targets"
+PROCESSED_FILES_PATH = "data/processed_dataset"
 
 
-def process_files_resmap(density_map_files, target_files):
+def process_files_resmap(
+    density_map_files: List[str], target_files: List[str]
+) -> Tuple[np.array, np.array]:
+    """Process electron density and local resolution maps gived by a Resmap.
+
+    Args:
+        density_map_files (List[str]): The list of `.mrc` files with electron density maps.
+        target_files (List[str]): The list of `.mrc` files with local resolution maps.
+
+    Returns:
+        Tuple[np.array, np.array]: Local resolution and electron density cubes.
+    """
+
     # TODO: create the similar thing for monores when it will be repaired.
     non_zero_cube_count = 0
     cube_count = 0
@@ -51,14 +64,28 @@ def process_files_resmap(density_map_files, target_files):
     return all_target_cubes, all_density_map_cubes
 
 
-def save_dataset(file_path, data_dict):
+def save_dataset(file_path: str, data_dict: Dict[str, np.array]) -> None:
+    """Save `.hdf5` dataset into a given directory.
+
+    Args:
+        file_path (str): Path where dataset will be saved.
+        data_dict (Dict[str, np.array]): Data to save (e. g. electron density cubes).
+    """
+
     h = h5py.File(file_path, mode="w")
     for k, data in data_dict.items():
         h.create_dataset(k, data=data)
     h.close()
 
 
-def process_data(density_map_path, target_path):
+def process_data(density_map_path: str, target_path: str) -> None:
+    """Process electron density and local resolution maps and and save `.hdf5` datasets (train, validation and test).
+
+    Args:
+        density_map_path (str): Path to electron density `.mrc` files.
+        target_path (str): Path to local resolution `.mrc` files.
+    """
+
     density_map_files = sorted(os.listdir(density_map_path))
     target_files = sorted(os.listdir(target_path))
 

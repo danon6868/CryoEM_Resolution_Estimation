@@ -5,4 +5,4 @@
 __pycache__
 venv/
 model_weights/
-results/*
+results/
