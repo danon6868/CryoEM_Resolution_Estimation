@@ -173,7 +173,10 @@ optional arguments:
 In this trial 3D-Unet will be trained during 30 epochs using hyperparameters from `resolution_estimation_with_dl/model_training/train_config.py` on example train data from `resolution_estimation_with_dl/example_data/example_train_data.hdf5`. For simplicity, validation will pass on the same data.
 
 ```bash
-python -m resolution_estimation_with_dl.model_training.train_model --train_data resolution_estimation_with_dl/example_data/example_train_data.hdf5 --valid_data resolution_estimation_with_dl/example_data/example_train_data.hdf5 --n_epochs 30
+python -m resolution_estimation_with_dl.model_training.train_model \
+--train_data resolution_estimation_with_dl/example_data/example_train_data.hdf5 \
+--valid_data resolution_estimation_with_dl/example_data/example_train_data.hdf5 \
+--n_epochs 30
 ```
 
 Script will create `resolution_estimation_with_dl/model_weights` directory with `unet_3d_trained_weights.pth` model weights inside.
@@ -207,7 +210,10 @@ optional arguments:
 In this example we will use 3D-UNet to estimate local resolution map for [this](https://www.ebi.ac.uk/emdb/EMD-13939) electron density map. To run model pretrained weights should be in `resolution_estimation_with_dl/model_weights` directory. Script `run_model.py` will download chosen weights if ones are missing in this directory. Following command will estimate local resolution map for EMD-13393 using `CPU` as device:
 
 ```bash
-python -m resolution_estimation_with_dl.resolution_estimation.run_model --electron_density_map resolution_estimation_with_dl/example_data/13939_map.mrc --model_name unet_3d_trained_dropout.pth --device cpu
+python -m resolution_estimation_with_dl.resolution_estimation.run_model \
+--electron_density_map resolution_estimation_with_dl/example_data/13939_map.mrc \
+--model_name unet_3d_trained_dropout.pth \
+--device cpu
 ```
 
 Padded electron density map (for visualization) and estimated local resolution map will be in `results` directory. Then you can you use any tool for **.mrc** files visualization, e.g. `Chimera`. On a figure below you can see EMD-13939 coloured by local resolution value:
