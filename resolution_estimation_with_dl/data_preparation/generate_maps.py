@@ -8,8 +8,8 @@ import numpy as np
 
 box_size = 64
 sampling_rate = 1
-pdb_files_path = "data/chosen_pdb"
-mrc_files_path = "data/mrc_for_chosen_pdb"
+pdb_files_path = "data/pdb_files"
+mrc_files_path = "data/mrc_for_pdb_files"
 res_vals = np.arange(2.0, 12.1, 0.1)
 
 if not os.path.exists(mrc_files_path):

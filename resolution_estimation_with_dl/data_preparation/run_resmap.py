@@ -7,10 +7,12 @@ import tqdm
 
 # This code was used to run Resmap for all `.mrc` files in `mrc_for_chosen_pdb` directory
 
-pdb_files_path = "data/chosen_pdb"
-mrc_files_path = "data/mrc_for_chosen_pdb"
-processed_files = "data/inputs"
+pdb_files_path = "data/pdb_files"
+mrc_files_path = "data/mrc_for_pdb_files"
+processed_files = "data/targets"
 
+if not os.path.isdir(processed_files):
+    os.mkdir(processed_files)
 
 for file in tqdm.tqdm(os.listdir(pdb_files_path)):
     if file[:-3] + "mrc" not in os.listdir(processed_files):

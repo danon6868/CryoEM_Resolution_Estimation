@@ -7,8 +7,6 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import Compose
 from loguru import logger
 
-from resolution_estimation_with_dl.model_training.model import UNet3D
-
 
 class ResValDataset(Dataset):
     """Pytorch Dataset that returns electron density map and local resolution map pairs by index"""
@@ -85,7 +83,7 @@ class Trainer:
 
     def __init__(
         self,
-        model: UNet3D,
+        model: nn.Module,
         epochs: int,
         criterion: nn.Module,
         optimizer: Optimizer,
@@ -224,7 +222,7 @@ class Trainer:
         torch.cuda.empty_cache()
 
 
-def initialize_weights(model: UNet3D) -> None:
+def initialize_weights(model: nn.Module) -> None:
     """Initialize model weights using He initialization (Kaiming uniform).
 
     Args:

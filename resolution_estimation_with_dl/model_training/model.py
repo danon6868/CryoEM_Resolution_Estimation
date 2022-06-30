@@ -1,6 +1,7 @@
 from typing import Tuple
 import torch
 from torch import nn
+
 from resolution_estimation_with_dl.model_training.training_config import TrainParameters
 
 

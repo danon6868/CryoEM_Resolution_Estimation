@@ -18,14 +18,14 @@ def set_up(output_dir):
 
 
 def train_model(
-    train_data: str, valid_data: str, n_epoches: int, verbose: int
+    train_data: str, valid_data: str, n_epochs: int, verbose: int
 ) -> UNet3D:
     """Train and (if necessary) validate model.
 
     Args:
         train_data (str): Path to the train data.
         valid_data (str): Path to the validation data.
-        n_epoches (int): Number of iterations for model training.
+        n_epochs (int): Number of iterations for model training.
         verbose (int): The detailing of the train process.
 
     Returns:
@@ -56,7 +56,7 @@ def train_model(
     metric = TrainParameters.metric(device=DEVICE)
     trainer = Trainer(
         model,
-        epochs=n_epoches,
+        epochs=n_epochs,
         criterion=criterion,
         optimizer=optimizer,
         trainloader=trainloader,
@@ -87,9 +87,9 @@ def main():
         help="Path to file with validation samples",
     )
     parser.add_argument(
-        "--n_epoches",
+        "--n_epochs",
         default=30,
-        help="The number of epoches to train the model",
+        help="The number of epochs to train the model",
         type=int,
     )
     parser.add_argument(
@@ -120,7 +120,7 @@ def main():
     model = train_model(
         train_data=args.train_data,
         valid_data=args.valid_data,
-        n_epoches=args.n_epoches,
+        n_epoches=args.n_epochs,
         verbose=args.verbose,
     )
 

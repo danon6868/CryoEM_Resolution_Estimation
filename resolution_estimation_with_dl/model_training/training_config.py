@@ -12,7 +12,7 @@ from resolution_estimation_with_dl.model_training.training_utils import (
 @dataclass
 class TrainParameters:
     # Number of iterations for model training
-    n_epoches: int = 30
+    n_epochs: int = 30
     # The shape of cubes which will be given to a model
     model_input_shape: Tuple[int] = (16, 16, 16)
     # Batch size

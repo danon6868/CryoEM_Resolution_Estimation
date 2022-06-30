@@ -12,7 +12,7 @@ from resolution_estimation_with_dl.data_preparation.data_prep_utils import *
 SEED = 10101
 TRAIN_SIZE = 0.7
 MODEL_INPUT_SHAPE = (16, 16, 16)
-MAP_FILES_PATH = "data/raw_inputs"
+MAP_FILES_PATH = "data/mrc_for_pdb_files"
 RESMAP_TARGETS_PATH = "data/targets"
 PROCESSED_FILES_PATH = "data/processed_dataset"
 
