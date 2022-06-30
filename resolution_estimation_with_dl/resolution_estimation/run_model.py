@@ -83,6 +83,11 @@ if __name__ == "__main__":
         "--output_file_name",
         help="File name for local resolution map. By default it will be a `electron_density_map` name with `resulotion` suffix",
     )
+    parser.add_argument(
+        "--device",
+        choices=["cpu", "cuda:0"],
+        help="Which device to use for model inference. If nothing was given, device from `train_config.py` will be used",
+    )
     args = parser.parse_args()
 
     # Set up directories and download model weights if it is required
@@ -112,9 +117,10 @@ if __name__ == "__main__":
         regularization=TrainParameters.regularization,
         align_corners=TrainParameters.align_corners,
     )
+    device = parser.device if parser.device is not None else TrainParameters.device
     logger.info(f"Start local resolution map estimation using UNet3D...")
     padded_map, local_resolution_map = run_model(
-        args.electron_density_map, TrainParameters.device, unet_3d, path_to_weights
+        args.electron_density_map, device, unet_3d, path_to_weights
     )
     logger.info(
         f"Saving final electron density and local resolution maps into {OUTPUT_DIR}..."

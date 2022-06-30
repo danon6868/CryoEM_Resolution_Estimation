@@ -72,7 +72,13 @@ Code for resolution estimation for a given electron density map is stored in `re
 + `utils.py` &mdash; functions for model inference (local resolution estimation)
 + `run_model.py` &mdash; script that runs model inference
 
+## Usage
 
+All code was run on **python 3.9.7** on **Ubuntu 22.04** and **Ubuntu 20.04**. Also functionality was tested on **Google Colab**. Correct work on other vesrions is not guaranteed.
+
+There are several options for working:
+
++ Run model inference on **Google Colab**
 
 
 ![img](/images/model_example_13939.png)
