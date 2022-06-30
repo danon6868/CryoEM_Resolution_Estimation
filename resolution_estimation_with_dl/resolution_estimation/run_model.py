@@ -29,6 +29,7 @@ def download_weights(model_name: str) -> None:
 
     if model_name == "unet_3d_trained_dropout.pth":
         url = "https://drive.google.com/u/0/uc?id=1-Imt4lolu-dMMsNItYgLV8GFDKDGUCr0&export=download"
+
         out_file_name = os.path.join(
             "resolution_estimation_with_dl",
             "model_weights",
@@ -92,6 +93,9 @@ if __name__ == "__main__":
 
     # Set up directories and download model weights if it is required
     set_up()
+    if not os.path.isdir("resolution_estimation_with_dl/model_weights"):
+        os.mkdir("resolution_estimation_with_dl/model_weights")
+
     electron_density_file_name = Path(args.electron_density_map).name
 
     if args.output_file_name is None:
