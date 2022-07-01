@@ -121,7 +121,7 @@ if __name__ == "__main__":
         regularization=TrainParameters.regularization,
         align_corners=TrainParameters.align_corners,
     )
-    device = args.device if parser.device is not None else TrainParameters.device
+    device = args.device if args.device is not None else TrainParameters.device
     logger.info(f"Start local resolution map estimation using UNet3D...")
     padded_map, local_resolution_map = run_model(
         args.electron_density_map, device, unet_3d, path_to_weights
