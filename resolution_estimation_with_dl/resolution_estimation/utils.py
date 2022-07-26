@@ -139,8 +139,8 @@ def run_model(
     )
 
     own_loader = DataLoader(normalized_map_cubes, batch_size=batch_size, shuffle=False)
+    model.load_state_dict(torch.load(state_dict_path, map_location=device))
     model = model.to(device)
-    model.load_state_dict(torch.load(state_dict_path))
 
     outputs = []
     model.eval()
