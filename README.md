@@ -81,7 +81,7 @@ There are several options for working:
 
 ### Launch notebook in Google Colab
 
-Follow [this](https://colab.research.google.com/github/danon6868/CryoEM_Resolution_Estimation/blob/main/3D_UNet_resolution_estimation.ipynb) link.
+Follow [this](https://colab.research.google.com/github/danon6868/CryoEM_Resolution_Estimation/blob/main/resolution_estimation_with_dl/3D_UNet_resolution_estimation.ipynb) link.
 
 
 ### Local running
